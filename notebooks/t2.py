@@ -20,6 +20,7 @@ predictor = build_efficienttam_camera_predictor(model_cfg, checkpoint)
 
 if_init = False
 points = np.array([[285, 207]], dtype=np.float32)
+points2 = np.array([[270, 189]], dtype=np.float32)
 # for labels, `1` means positive click and `0` means negative click
 labels = np.array([1], np.int32)
 
@@ -44,9 +45,11 @@ with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
             predictor.load_first_frame(frame)
             if_init = True
             _, out_obj_ids, out_mask_logits = predictor.add_new_prompt(frame_idx=0, obj_id=2, points=points, labels=labels)
+            # _, out_obj_ids, out_mask_logits = predictor.add_new_prompt(frame_idx=0, obj_id=3, points=points2, labels=labels)
+            _, out_obj_ids, out_mask_logits = predictor.add_new_prompt(frame_idx=0, obj_id=3, bbox=(260, 179, 280, 199), points=points2, labels=labels)
             start_time = time.time()
         else:
-            image = Image.open(f"./videos/1/{i:05d}.jpg")  # Load image
+            image = Image.open(f"./videos/talos/{i:05d}.jpg")  # Load image
             image = image.convert("RGB")  # Ensure 3-channel image
             image_array = np.array(image)
             frame = image_array
@@ -120,6 +123,6 @@ plt.title(f"frame 0")
 plt.imshow(Image.open(os.path.join(video_dir, frame_names[0])))
 show_points(points, labels, plt.gca())
 for i, out_obj_id in enumerate(out_obj_ids):
-    show_points(*prompts[out_obj_id], plt.gca())
+    # show_points(*prompts[out_obj_id], plt.gca())
     show_mask((out_mask_logits[i] > 0.0).cpu().numpy(), plt.gca(), obj_id=out_obj_id)
 plt.show()

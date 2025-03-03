@@ -21,6 +21,9 @@ if os.path.isdir(
         "You're likely running Python from the parent directory of the EfficientTAM repository "
     )
 
+MY_CFG_DIR = "/home/galois/git_downloads/6cyc6/EfficientTAM/efficient_track_anything/"
+MY_MODEL_DIR = "/home/galois/git_downloads/6cyc6/EfficientTAM/checkpoints/"
+
 # Working on putting efficient track anything models on Facebook Hugging Face Hub.
 # This is just for demonstration.
 # Please download efficient track anything models from https://huggingface.co/yunyangx/efficient-track-anything.
@@ -100,13 +103,12 @@ def build_efficienttam_camera_predictor(
     vos_optimized=False,
 ):
     hydra_overrides = [
-        # "++model._target_=sam2.sam2_camera_predictor.SAM2CameraPredictor",
         "++model._target_=efficient_track_anything.efficienttam_camera_predictor.TAMCameraPredictor",
     ]
 
     if vos_optimized:
         hydra_overrides = [
-            "++model._target_=sam2.sam2_camera_predictor.SAM2CameraPredictorVOS",
+            "++model._target_=efficient_track_anything.efficienttam_camera_predictor.TAMCameraPredictorVOS",
         ]
 
     if apply_postprocessing:
